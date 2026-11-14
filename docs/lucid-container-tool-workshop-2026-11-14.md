@@ -280,8 +280,15 @@ Desktop is the heaviest option on an 8 GB Intel Mac, so it has something
 to prove, not a head start. **Fastest wins, justified with measurements
 on Gary's Mac.**
 
+Update (2026-11-14, after the workshop): Gary settled the direction —
+ARC-VM is the intended host. The container runs inside an ARC-VM virtual
+machine; ARC-VM is the foundation, ARC-Container the tool on top. Until
+ARC-VM is ready the interim host is Lima/Docker, decided by the Mac
+shootout (§5b).
+
 | Runtime | What it is | VM? | Idle RAM (published) | Start (published) | Notes for Lucid |
 |---|---|---|---|---|---|
+| ARC-VM (intended host) | Our own Linux VM — the ARC multi-VM workspace runtime, hosting the container | yes | TBD (Mac shootout) | TBD (Mac shootout) | The plan: the container runs inside an ARC-VM VM instead of Docker Desktop's or Lima's. ARC-VM is design-only right now, so until it is ready the interim host is Lima/Docker |
 | Docker Desktop | Docker Engine + GUI in a HyperKit VM (Intel) | yes | 2–4 GB | 10–45 s | Most familiar; heaviest; the one to beat |
 | Lima / Colima | QEMU (+HyperKit accel) Linux VM + Docker-compatible CLI | yes | ~500 MB | 3–15 s | Open source; `colima start --cpu 2 --memory 2`; smallest VM footprint |
 | Podman machine | QEMU VM + Podman (daemonless, rootless) | yes | ~500 MB (est.) | ~5–15 s (est.) | Same VM shape as Lima; different CLI; rootless by design |

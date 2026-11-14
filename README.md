@@ -11,7 +11,11 @@ The Linux container tool for the Lucid agent — a sandboxed Linux environment p
 - Workspace-only mounts: only the active workspace folder, never home, keychain, or other profiles.
 - Network off by default, on only through the Zed permission model (deny beats auto).
 - CPU/memory capped (the Mac shootout decides the cap — 2 GB vs 3 GB of 8 GB).
-- Runtime NOT decided: Docker Desktop, Lima/Colima, Podman machine, microVM via Virtualization.framework, macOS-native Seatbelt sandboxing, or no Linux container at all. Fastest wins, measured on the Mac.
+- Runtime: ARC-VM is the intended host — the Linux VM underneath the container runtime on macOS. Until ARC-VM is ready the runtime rides on Lima/Docker; the Mac shootout decides the interim host.
+
+## ARC-VM
+
+ARC-VM provides the Linux virtual machine that hosts the container runtime on macOS. The agent's per-session sandboxes run inside an ARC-VM VM instead of Docker Desktop's or Lima's — ARC-VM is the foundation, ARC-Container the tool on top, the whole stack ours with no Docker dependency. ARC-VM is design-only right now (the multi-VM workspace), so the container tool waits on it; the Mac shootout decides the interim host.
 
 ## The image (centerpiece)
 
@@ -25,7 +29,7 @@ The speed trick: a resident sidecar lives inside the warm container, so the agen
 
 ## Open questions
 
-1. Runtime: Docker Desktop, Lima/Colima, Podman, microVM, Seatbelt, or no container — Mac shootout decides.
+1. Runtime: ARC-VM is the intended host (settled 2026-11-14); the interim host (Lima vs Docker) is decided by the Mac shootout.
 2. Image contents: data-science stack in `full`? Build tools in slim or only full? Which node/python versions?
 3. Network default: off always, or allow-listed proxy on by default for installs?
 4. Warm-up timing: container starts when Agent mode flips, or lazily on first tool call?
