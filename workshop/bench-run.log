@@ -1,0 +1,139 @@
++ cd /home/hatch/workspace/lucid-container-tool-workshop
++ pkill -x dockerd
++ sleep 3
++ nohup dockerd --iptables=false --bridge=none --userland-proxy=false
+++ seq 1 20
++ for i in $(seq 1 20)
++ docker info
++ sleep 2
++ for i in $(seq 1 20)
++ docker info
++ break
++ docker info
++ grep -E 'Server Version|Storage Driver|Cgroup Version'
+WARNING: No memory limit support
+WARNING: No swap limit support
+WARNING: No cpu cfs quota support
+WARNING: No cpu cfs period support
+WARNING: No cpu shares support
+WARNING: No cpuset support
+WARNING: No io.weight support
+WARNING: No io.weight (per device) support
+WARNING: No io.max (rbps) support
+WARNING: No io.max (wbps) support
+WARNING: No io.max (riops) support
+WARNING: No io.max (wiops) support
+WARNING: IPv4 forwarding is disabled
+ Server Version: 29.1.3
+ Storage Driver: overlayfs
+ Cgroup Version: 2
++ echo '=== pull alpine (timed) ==='
+=== pull alpine (timed) ===
++ docker pull alpine:3.21
+3.21: Pulling from library/alpine
+55971c3da804: Download complete
+871d48e9bf6b: Pulling fs layer
+3544a6103257: Download complete
+871d48e9bf6b: Download complete
+871d48e9bf6b: Pull complete
+Digest: sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab
+Status: Downloaded newer image for alpine:3.21
+docker.io/library/alpine:3.21
+
+real	0m9.837s
+user	0m0.012s
+sys	0m0.014s
++ echo '=== pull wolfi-base (timed) ==='
+=== pull wolfi-base (timed) ===
++ docker pull cgr.dev/chainguard/wolfi-base:latest
+latest: Pulling from chainguard/wolfi-base
+820848efcf94: Pulling fs layer
+7a4877cecca8: Pulling fs layer
+386404bbcc5e: Pulling fs layer
+7751c9de7461: Pulling fs layer
+53abc9c20665: Pulling fs layer
+f4265a56de30: Pulling fs layer
+1d5f5dc94af7: Pulling fs layer
+dc2b2c4d05a6: Pulling fs layer
+62bd281d8922: Pulling fs layer
+82087d46dc9d: Pulling fs layer
+f53829540a90: Pulling fs layer
+dc2b2c4d05a6: Download complete
+7a4877cecca8: Download complete
+386404bbcc5e: Download complete
+820848efcf94: Download complete
+53abc9c20665: Download complete
+f4265a56de30: Download complete
+7751c9de7461: Download complete
+62bd281d8922: Download complete
+82087d46dc9d: Download complete
+f53829540a90: Download complete
+1d5f5dc94af7: Download complete
+1d5f5dc94af7: Pull complete
+failed to extract layer (application/vnd.oci.image.layer.v1.tar+gzip sha256:7a4877cecca890677d2aeeaaaa4a4659cff0e5b2db98ca578583621e510cc657) to overlayfs as "extract-783210399-F7QJ sha256:7311b397bb43415f259df034f9f63f0465471b2e0b4b8f8853062c6d9844ecff": failed to mount /var/lib/docker/containerd/daemon/tmpmounts/containerd-mount54563762: mount source: "overlay", target: "/var/lib/docker/containerd/daemon/tmpmounts/containerd-mount54563762", fstype: overlay, flags: 0, data: "workdir=/var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/5/work,upperdir=/var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,lowerdir=/var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/4/fs,userxattr", err: invalid argument
+
+real	0m13.058s
+user	0m0.014s
+sys	0m0.015s
++ echo '=== build lucid-agent:alpine (timed) ==='
+=== build lucid-agent:alpine (timed) ===
++ docker build -t lucid-agent:alpine -f /tmp/Dockerfile.alpine /tmp
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+unable to prepare context: unable to evaluate symlinks in Dockerfile path: lstat /tmp/Dockerfile.alpine: no such file or directory
+
+real	0m0.026s
+user	0m0.013s
+sys	0m0.010s
++ echo '=== build lucid-agent:wolfi (timed) ==='
+=== build lucid-agent:wolfi (timed) ===
++ docker build -t lucid-agent:wolfi -f /tmp/Dockerfile.wolfi /tmp
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+unable to prepare context: unable to evaluate symlinks in Dockerfile path: lstat /tmp/Dockerfile.wolfi: no such file or directory
+
+real	0m0.015s
+user	0m0.008s
+sys	0m0.010s
++ echo '=== images ==='
+=== images ===
++ docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}'
+alpine:3.21 13.1MB
++ echo '=== bench ==='
+=== bench ===
++ python3 docker-bench.py
+{
+  "images": {
+    "alpine:3.21": "13.1MB",
+    "cgr.dev/chainguard/wolfi-base:latest": "",
+    "lucid-agent:alpine": "",
+    "lucid-agent:wolfi": ""
+  },
+  "cold_start_alpine:3.21": {
+    "error": "docker: Error response from daemon: failed to mount /tmp/containerd-mount1500060477: mount source: \"overlay\", target: \"/tmp/containerd-mount1500060477\", fstype: overlay, flags: 0, data: \"workdir=/var/"
+  },
+  "cold_start_lucid-agent:alpine": {
+    "error": "Unable to find image 'lucid-agent:alpine' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --hel"
+  },
+  "cold_start_lucid-agent:wolfi": {
+    "error": "Unable to find image 'lucid-agent:wolfi' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --help"
+  },
+  "exec_alpine:3.21": {
+    "error": "docker: Error response from daemon: failed to mount /tmp/containerd-mount583147920: mount source: \"overlay\", target: \"/tmp/containerd-mount583147920\", fstype: overlay, flags: 0, data: \"workdir=/var/li"
+  },
+  "exec_lucid-agent:alpine": {
+    "error": "Unable to find image 'lucid-agent:alpine' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --hel"
+  },
+  "exec_lucid-agent:wolfi": {
+    "error": "Unable to find image 'lucid-agent:wolfi' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --help"
+  },
+  "container_io_tmpfs": "error: Unable to find image 'lucid-agent:alpine' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --hel",
+  "container_io_bindmount": "error: Unable to find image 'lucid-agent:alpine' locally\ndocker: Error response from daemon: pull access denied for lucid-agent, repository does not exist or may require 'docker login'\n\nRun 'docker run --hel",
+  "capped": {
+    "error": "docker: Error response from daemon: NanoCPUs can not be set, as your kernel does not support CPU CFS scheduler or the cgroup is not mounted\n\nRun 'docker run --help' for more information"
+  }
+}
