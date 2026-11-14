@@ -2,7 +2,7 @@
 
 The Linux container tool for the Lucid agent — a sandboxed Linux environment per agent session, so the agent's tools (including the shell tool) run inside the container instead of on the host.
 
-**Status: design + research only.** The build is gated on the agent proving viable as a driving intelligence. Nothing here is installed, bundled, or wired into Lucid yet.
+**Status: design + research only — PRE-INSTALLED by direction (Gary, 2026-11-14).** ARC-VM and ARC-Container ship bundled in Lucid, not fetched at install. The build is gated on the agent proving viable as a driving intelligence; nothing is wired into Lucid yet.
 
 ## The design
 
